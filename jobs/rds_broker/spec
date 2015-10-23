@@ -1,0 +1,77 @@
+---
+name: rds_broker
+
+packages:
+  - bosh-helpers
+  - rds-broker
+  - route-registrar
+
+templates:
+  bin/job_properties.sh.erb: bin/job_properties.sh
+  bin/rds_broker_ctl.erb: bin/rds_broker_ctl
+  bin/route_registrar_ctl.erb: bin/route_registrar_ctl
+  config/config.json.erb: config/config.json
+  config/route_registrar.yml.erb: config/route_registrar.yml
+
+properties:
+  rds_broker.user:
+    description: "User which will own the RDS Broker services"
+    default: "root"
+  rds_broker.group:
+    description: "Group which will own the RDS Broker services"
+    default: "vcap"
+  rds_broker.log_level:
+    description: "Broker Log Level (DEBUG, INFO, ERROR, FATAL)"
+    default: "DEBUG"
+  rds_broker.port:
+    description: "Broker Listen Port"
+    default: 80
+  rds_broker.username:
+    description: "Broker Auth Username"
+    default: "rds-broker"
+  rds_broker.password:
+    description: "Broker Auth Password"
+    default: "rds-broker"
+  rds_broker.aws_access_key_id:
+    description: "AWS Access Key ID"
+  rds_broker.aws_secret_access_key:
+    description: "AWS Secret Access Key"
+  rds_broker.aws_region:
+    description: "AWS RDS Region"
+    default: "us-east-1"
+  rds_broker.db_prefix:
+    description: "Prefix to add to DB Indentifiers"
+    default: "cf"
+  rds_broker.allow_user_provision_parameters:
+    description: "Allow users to send arbitrary parameters on provision calls"
+    default: true
+  rds_broker.allow_user_update_parameters:
+    description: "Allow users to send arbitrary parameters on update calls"
+    default: true
+  rds_broker.allow_user_bind_parameters:
+    description: "Allow users to send arbitrary parameters on bind calls"
+    default: true
+  rds_broker.catalog:
+    description: "RDS Broker catalog"
+    default: {}
+
+  rds_broker.route_registrar.external_host:
+    description: "Hostname to include in routing advertisement"
+  rds_broker.route_registrar.external_ip:
+    description: "External IP to include in routing advertisement"
+  rds_broker.route_registrar.nats.machines:
+    description: "List of NATS machines"
+    default: []
+  rds_broker.route_registrar.nats.port:
+    description: "NATS port"
+    default: 4222
+  rds_broker.route_registrar.nats.user:
+    description: "NATS user"
+  rds_broker.route_registrar.nats.password:
+    description: "NATS password"
+  rds_broker.route_registrar.health_checker.name:
+    description: "Label for health checker"
+    default: "rds_broker"
+  rds_broker.route_registrar.health_checker.interval:
+    description: "Interval in seconds to run health checker"
+    default: 10

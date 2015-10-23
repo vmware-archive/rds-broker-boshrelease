@@ -1,0 +1,12 @@
+---
+stemcell_criteria:
+  os: ubuntu-trusty
+  version: "3100"
+  requires_cpi: false
+
+releases:
+  - name: rds-broker
+    file: rds-broker-0+dev.1.tgz
+    version: "0+dev.1"
+    md5: 16095ae0044f59de8f31053b459035fa
+    url: https://storage.googleapis.com/pivotal/rds-broker-0%2Bdev.1.tgz

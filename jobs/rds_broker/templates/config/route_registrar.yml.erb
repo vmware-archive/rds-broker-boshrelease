@@ -1,0 +1,17 @@
+---
+external_host: <%= p('rds_broker.route_registrar.external_host', '') %>
+external_ip: <%= p('rds_broker.route_registrar.external_ip', '') %>
+port: <%= p('rds_broker.port') %>
+
+message_bus_servers:
+  <% p('rds_broker.route_registrar.nats.machines').each do |server| %>
+  - host: <%= server %>:<%= p('rds_broker.route_registrar.nats.port') %>
+    <% if_p('rds_broker.route_registrar.nats.user', 'rds_broker.route_registrar.nats.password') do |nats_user, nats_password| %>
+    user: <%= nats_user %>
+    password: <%= nats_password %>
+    <% end %>
+  <% end %>
+
+health_checker:
+  name: <%= p('rds_broker.route_registrar.health_checker.name') %>
+  interval: <%= p('rds_broker.route_registrar.health_checker.interval') %>

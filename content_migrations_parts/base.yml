@@ -1,0 +1,4 @@
+---
+product: p-rds-broker
+installation_version: "1.4"
+migrations: []

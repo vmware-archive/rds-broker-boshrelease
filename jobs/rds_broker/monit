@@ -1,0 +1,14 @@
+check process rds_broker
+  with pidfile /var/vcap/sys/run/rds_broker/rds_broker.pid
+  start program "/var/vcap/packages/bosh-helpers/monit_debugger rds_broker_ctl '/var/vcap/jobs/rds_broker/bin/rds_broker_ctl start'"
+  stop program "/var/vcap/packages/bosh-helpers/monit_debugger rds_broker_ctl '/var/vcap/jobs/rds_broker/bin/rds_broker_ctl stop'"
+  group vcap
+
+<% if_p('rds_broker.route_registrar.external_host', 'rds_broker.route_registrar.external_ip') do %>
+check process rds_broker_route_registrar
+  with pidfile /var/vcap/sys/run/rds_broker/route_registrar.pid
+  start program "/var/vcap/packages/bosh-helpers/monit_debugger route_registrar_ctl '/var/vcap/jobs/rds_broker/bin/route_registrar_ctl start'"
+  stop program "/var/vcap/packages/bosh-helpers/monit_debugger route_registrar_ctl '/var/vcap/jobs/rds_broker/bin/route_registrar_ctl stop'"
+  group vcap
+  depends on rds_broker
+<% end %>

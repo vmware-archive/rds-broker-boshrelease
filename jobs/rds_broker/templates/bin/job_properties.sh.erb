@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+#
+# RDS Broker properties
+#
+
+# Directory to store the RDS Broker configuration files
+export RDS_BROKER_CONF_DIR=${JOB_DIR}/config
+
+# Directory to store the RDS Broker log files
+export RDS_BROKER_LOG_DIR=${LOG_DIR}
+
+# Directory to store the RDS Broker process IDs
+export RDS_BROKER_PID_DIR=${RUN_DIR}
+
+# Directory to store the RDS Broker data files
+export RDS_BROKER_STORE_DIR=${STORE_DIR}
+
+# Directory to store the RDS Broker temp files
+export RDS_BROKER_TMP_DIR=${TMP_DIR}
+
+# User which will own the RDS Broker services
+export RDS_BROKER_USER="<%= p('rds_broker.user') %>"
+
+# Group which will own the RDS Broker services
+export RDS_BROKER_GROUP="<%= p('rds_broker.group') %>"
+
+# Broker Listen Port
+export RDS_BROKER_PORT="<%= p('rds_broker.port') %>"
+
+# AWS Access Key ID
+export AWS_ACCESS_KEY_ID="<%= p('rds_broker.aws_access_key_id') %>"
+
+# AWS Secret Access Key
+export AWS_SECRET_ACCESS_KEY="<%= p('rds_broker.aws_secret_access_key') %>"

@@ -1,0 +1,33 @@
+#!/bin/bash
+
+set -e # exit immediately if a simple command exits with a non-zero status
+
+# Setup common env vars and folders
+source /var/vcap/packages/bosh-helpers/ctl_setup.sh 'rds_broker' 'route_registrar'
+export ROUTE_REGISTRAR_PID_FILE=${RDS_BROKER_PID_DIR}/route_registrar.pid
+
+case $1 in
+
+  start)
+    pid_guard ${ROUTE_REGISTRAR_PID_FILE} ${JOB_NAME}
+
+    # Start route registrar service
+    exec chpst -u ${RDS_BROKER_USER}:${RDS_BROKER_GROUP} route-registrar \
+      -configPath ${RDS_BROKER_CONF_DIR}/route_registrar.yml \
+      -pidfile ${ROUTE_REGISTRAR_PID_FILE} \
+      >>${RDS_BROKER_LOG_DIR}/${OUTPUT_LABEL}.stdout.log \
+      2>>${RDS_BROKER_LOG_DIR}/${OUTPUT_LABEL}.stderr.log
+    ;;
+
+  stop)
+    # Stop route registrar service
+    kill_and_wait ${ROUTE_REGISTRAR_PID_FILE}
+    ;;
+
+  *)
+    echo "Usage: $0 {start|stop}"
+    exit 1
+    ;;
+
+esac
+exit 0
