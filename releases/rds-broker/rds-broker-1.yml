@@ -1,0 +1,61 @@
+---
+packages:
+- name: bosh-helpers
+  version: 2e315fb7cbca15e9be6f8f176cc5d3268b89d4ef
+  fingerprint: 2e315fb7cbca15e9be6f8f176cc5d3268b89d4ef
+  sha1: de41eb40bc91568b3642ca4a6f910471e22b743d
+  dependencies: []
+- name: broker-registrar
+  version: 46213225d775263932e072a461e524baf0994967
+  fingerprint: 46213225d775263932e072a461e524baf0994967
+  sha1: e75e610297020d78f50925d101eb878b30b690fe
+  dependencies:
+  - ruby
+- name: cf_cli
+  version: 0194e8c160bb0982c1a0336313ae0b42cf829a19
+  fingerprint: 0194e8c160bb0982c1a0336313ae0b42cf829a19
+  sha1: 9d3d0380d87a448218af7c1618516cc801b5cb7a
+  dependencies: []
+- name: golang
+  version: 5519bcd760fbf15e8c2a0562da4cf2e00d846df9
+  fingerprint: 5519bcd760fbf15e8c2a0562da4cf2e00d846df9
+  sha1: c2bb364e2c91853581454b9437ae76fb931d19f8
+  dependencies: []
+- name: rds-broker
+  version: 6e84328d623447424f1f46452028bcf3a9a0b701
+  fingerprint: 6e84328d623447424f1f46452028bcf3a9a0b701
+  sha1: 3b1d3874644816d6dcaf9f478a612dcdf511973a
+  dependencies:
+  - golang
+- name: route-registrar
+  version: 22dacdbd37eb7e74f88368bee1f2bdd3c547b245
+  fingerprint: 22dacdbd37eb7e74f88368bee1f2bdd3c547b245
+  sha1: 60e66dd5525f89650065f6228d3d9931b6eb1aad
+  dependencies:
+  - golang
+- name: ruby
+  version: 99128774dca567fbc5dee0a8bd0999c5f1776ba1
+  fingerprint: 99128774dca567fbc5dee0a8bd0999c5f1776ba1
+  sha1: 381a8b4120bfb7757e5183e33cbe50b36aaabc6c
+  dependencies: []
+jobs:
+- name: broker-deregistrar
+  version: 30015fee8a0532ac7e5b72080dca95e85b810eda
+  fingerprint: 30015fee8a0532ac7e5b72080dca95e85b810eda
+  sha1: cc3bb2083d1a773e0404cf341fb37b6610f937de
+- name: broker-registrar
+  version: 9f566e65b9c68b62521b77ea3105afe9f654396b
+  fingerprint: 9f566e65b9c68b62521b77ea3105afe9f654396b
+  sha1: ba99d484df677f184ca57e773665e7dbc825ad2a
+- name: rds_broker
+  version: cb7f4adc1d36e81d158169eaef73acc46cb5c38c
+  fingerprint: cb7f4adc1d36e81d158169eaef73acc46cb5c38c
+  sha1: 2c6bab4ac60acd6af24c4d4d344aeca843818cd9
+license:
+  version: 2f84235b3f0ec1695c78a590f33b5309c933a837
+  fingerprint: 2f84235b3f0ec1695c78a590f33b5309c933a837
+  sha1: a4660820649fbbed98061b70e55f8186881a5744
+commit_hash: bc9441b4
+uncommitted_changes: true
+name: rds-broker
+version: '1'
