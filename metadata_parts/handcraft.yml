@@ -41,27 +41,15 @@ form_types:
       - reference: .properties.aws_region
         label: "AWS RDS Region"
         description: "Enter the AWS RDS Region where DB Instances will be created in"
+      - reference: .properties.db_subnet_group_name
+        label: "AWS RDS DB Subnet Group"
+        description: "Enter the AWS RDS DB subnet group name that defines which subnets and IP ranges DB Instances can use in the VPC"
+      - reference: .properties.vpc_security_group_id
+        label: "AWS VPC Security Group ID"
+        description: "Enter the VPC Security Group ID that have rules authorizing connections from applications that need to access the data stored in DB Instances"
       - reference: .properties.publicly_accessible
         label: "Publicly Accessible"
         description: "Specify if DB Instances will be publicly accessible"
-      - reference: .properties.db_network
-        label: "DB Instances Network"
-        selector_property_inputs:
-          - reference: .properties.db_network.vpc
-            label: "VPC"
-            property_inputs:
-              - reference: .properties.db_network.vpc.db_subnet_group_name
-                label: "DB Subnet Group"
-                description: "Enter the DB subnet group name that defines which subnets and IP ranges DB Instances can use in the VPC"
-              - reference: .properties.rdb_network.vpc.vpc_security_group_id
-                label: "VPC Security Group ID"
-                description: "Enter the (security group ID that have rules authorizing connections from applications that need to access the data stored in DB Instances"
-          - reference: .properties.db_network.classic
-            label: "Classic"
-            property_inputs:
-              - reference: .properties.db_network.classic.db_security_group
-                label: "DB Security Group Name"
-                description: "Enter the security group name that have rules authorizing connections from applications that need to access the data stored in DB Instances"
       - reference: .properties.multi_az
         label: "Multi-AZ Deployment for DB Instances? (recommended for high availability)"
         selector_property_inputs:
@@ -78,84 +66,6 @@ form_types:
     label: "Service Plans Config"
     description: "Service Plans Configuration"
     property_inputs:
-      - reference: .properties.plan_small_suffix
-        label: "Plan Small - Name Suffix"
-        description: "Enter the suffix to use when using for the Plan Small (ie: small, bronze, ...)"
-      - reference: .properties.plan_small_db_instance_class
-        label: "Plan Small - DB Instance Class"
-        description: "Select the DB Instance Class that allocates the computational, network, and memory capacity required by planned workload when using the Plan Small"
-      - reference: .properties.plan_small_allocated_storage
-        label: "Plan Small - Allocated Storage"
-        description: "Enter the amount of storage (in gigabytes) to be initially allocated for DB Instances when using the Plan Small"
-      - reference: .properties.plan_small_cost
-        label: "Plan Small - Cost"
-        selector_property_inputs:
-          - reference: .properties.plan_small_cost.free
-            label: "Free"
-          - reference: .properties.plan_small_cost.paid
-            label: "Paid"
-            property_inputs:
-              - reference: .properties.plan_small_cost.paid.amount
-                label: "Amount"
-                description: "Enter the cost of the service"
-              - reference: .properties.plan_small_cost.paid.currency
-                label: "Currency"
-                description: "Enter the currency of the cost of the service"
-              - reference: .properties.plan_small_cost.paid.unit
-                label: "Unit"
-                description: "Enter the unit of measure (ie: MONTHLY, ...)"
-      - reference: .properties.plan_medium_suffix
-        label: "Plan Medium - Name Suffix"
-        description: "Enter the suffix to use when using for the Plan Medium (ie: medium, silver, ..."
-      - reference: .properties.plan_medium_db_instance_class
-        label: "Plan Medium - DB Instance Class"
-        description: "Select the DB Instance Class that allocates the computational, network, and memory capacity required by planned workload when using the Plan Medium"
-      - reference: .properties.plan_medium_allocated_storage
-        label: "Plan Medium - Allocated Storage"
-        description: "Enter the amount of storage (in gigabytes) to be initially allocated for DB Instances when using the Plan Medium"
-      - reference: .properties.plan_medium_cost
-        label: "Plan Medium - Cost"
-        selector_property_inputs:
-          - reference: .properties.plan_medium_cost.free
-            label: "Free"
-          - reference: .properties.plan_medium_cost.paid
-            label: "Paid"
-            property_inputs:
-              - reference: .properties.plan_medium_cost.paid.amount
-                label: "Amount"
-                description: "Enter the cost of the service"
-              - reference: .properties.plan_medium_cost.paid.currency
-                label: "Currency"
-                description: "Enter the currency of the cost of the service"
-              - reference: .properties.plan_medium_cost.paid.unit
-                label: "Unit"
-                description: "Enter the unit of measure (ie: MONTHLY, ...)"
-      - reference: .properties.plan_large_suffix
-        label: "Plan Large - Name Suffix"
-        description: "Enter the suffix to use when using for the Plan Large (ie: large, gold, ...)"
-      - reference: .properties.plan_large_db_instance_class
-        label: "Plan Large - DB Instance Class"
-        description: "Select the DB Instance Class that allocates the computational, network, and memory capacity required by planned workload when using the Plan Large"
-      - reference: .properties.plan_large_allocated_storage
-        label: "Plan Large - Allocated Storage"
-        description: "Enter the amount of storage (in gigabytes) to be initially allocated for DB Instances when using the Plan Large"
-      - reference: .properties.plan_large_cost
-        label: "Plan Large - Cost"
-        selector_property_inputs:
-          - reference: .properties.plan_large_cost.free
-            label: "Free"
-          - reference: .properties.plan_large_cost.paid
-            label: "Paid"
-            property_inputs:
-              - reference: .properties.plan_large_cost.paid.amount
-                label: "Amount"
-                description: "Enter the cost of the service"
-              - reference: .properties.plan_large_cost.paid.currency
-                label: "Currency"
-                description: "Enter the currency of the cost of the service"
-              - reference: .properties.plan_large_cost.paid.unit
-                label: "Unit"
-                description: "Enter the unit of measure (ie: MONTHLY, ...)"
       - reference: .properties.allow_user_provision_parameters
         label: "Allow user provision parameters"
         description: "Allow or disallow users to send arbitrary parameters on provision calls"
@@ -201,49 +111,18 @@ property_blueprints:
     type: string
     configurable: false
     default: pcf
+  - name: db_subnet_group_name
+    type: string
+    configurable: true
+    optional: false
+  - name: vpc_security_group_id
+    type: string
+    configurable: true
+    optional: false
   - name: publicly_accessible
     type: boolean
     configurable: true
     default: false
-  - name: db_network
-    type: selector
-    configurable: true
-    optional: false
-    default: VPC
-    option_templates:
-      - name: vpc
-        select_value: VPC
-        named_manifests:
-          - name: vpc_security_group_ids
-            manifest: |
-              - (( .properties.db_network.vpc.vpc_security_group_id.value ))
-          - name: db_security_groups
-            manifest: |
-              []
-        property_blueprints:
-          - name: db_subnet_group_name
-            type: string
-            configurable: true
-            optional: false
-          - name: vpc_security_group_id
-            type: string
-            configurable: true
-            optional: false
-      - name: classic
-        select_value: Classic
-        named_manifests:
-          - name: db_security_groups
-            manifest: |
-              - (( .properties.db_network.classic.db_security_group.value ))
-          - name: vpc_security_group_ids
-            manifest: |
-              []
-        property_blueprints:
-          - name: db_security_group
-            type: string
-            configurable: true
-            optional: false
-            default: "default"
   - name: multi_az
     type: selector
     configurable: true
@@ -259,260 +138,6 @@ property_blueprints:
             type: string
             configurable: true
             optional: true
-  - name: plan_small_suffix
-    type: string
-    configurable: true
-    optional: false
-    default: small
-  - name: plan_small_db_instance_class
-    type: dropdown_select
-    configurable: true
-    optional: false
-    default: db.m3.medium
-    options:
-      - name: db.t2.micro
-        label: "db.t2.micro (1 vCPU - 1 GiB)"
-      - name: db.t2.small
-        label: "db.t2.small (1 vCPU - 2 GiB)"
-      - name: db.t2.medium
-        label: "db.t2.medium (2 vCPU - 4 GiB)"
-      - name: db.t2.large
-        label: "db.t2.large (2 vCPU - 8 GiB)"
-      - name: db.m3.medium
-        label: "db.m3.medium (1 vCPU - 3.75 GiB)"
-      - name: db.m3.large
-        label: "db.m3.large (2 vCPU - 7.5 GiB)"
-      - name: db.m3.xlarge
-        label: "db.m3.xlarge (4 vCPU - 15 GiB)"
-      - name: db.m3.2xlarge
-        label: "db.m3.2xlarge (8 vCPU - 30 GiB)"
-      - name: db.r3.large
-        label: "db.r3.large (2 vCPU - 15 GiB)"
-      - name: db.r3.xlarge
-        label: "db.r3.xlarge (4 vCPU - 30.5 GiB)"
-      - name: db.r3.2xlarge
-        label: "db.r3.2xlarge (8 vCPU - 61 GiB)"
-      - name: db.r3.4xlarge
-        label: "db.r3.4xlarge (16 vCPU - 122 GiB)"
-      - name: db.r3.8xlarge
-        label: "db.r3.8xlarge (32 vCPU - 244 GiB)"
-  - name: plan_small_allocated_storage
-    type: integer
-    configurable: true
-    optional: false
-    default: 10
-    constraints:
-      min: 5
-      max: 6144
-  - name: plan_small_storage_type
-    type: string
-    configurable: false
-    optional: false
-    default: standard
-  - name: plan_small_cost
-    type: selector
-    configurable: true
-    optional: false
-    default: free
-    option_templates:
-      - name: free
-        select_value: free
-        named_manifests:
-          - name: cost
-            manifest: |
-              []
-      - name: paid
-        select_value: paid
-        named_manifests:
-          - name: cost
-            manifest: |
-              - amount:
-                  (( .properties.plan_small_cost.paid.currency.value )): <%= "(( .properties.plan_small_cost.paid.amount.value ))".to_f %>
-                unit: (( .properties.plan_small_cost.paid.unit.value ))
-        property_blueprints:
-          - name: amount
-            type: string
-            configurable: true
-            optional: false
-          - name: currency
-            type: string
-            configurable: true
-            optional: false
-          - name: unit
-            type: string
-            configurable: true
-            optional: false
-  - name: plan_medium_suffix
-    type: string
-    configurable: true
-    optional: false
-    default: medium
-  - name: plan_medium_db_instance_class
-    type: dropdown_select
-    configurable: true
-    optional: false
-    default: db.m3.large
-    options:
-      - name: db.t2.micro
-        label: "db.t2.micro (1 vCPU - 1 GiB)"
-      - name: db.t2.small
-        label: "db.t2.small (1 vCPU - 2 GiB)"
-      - name: db.t2.medium
-        label: "db.t2.medium (2 vCPU - 4 GiB)"
-      - name: db.t2.large
-        label: "db.t2.large (2 vCPU - 8 GiB)"
-      - name: db.m3.medium
-        label: "db.m3.medium (1 vCPU - 3.75 GiB)"
-      - name: db.m3.large
-        label: "db.m3.large (2 vCPU - 7.5 GiB)"
-      - name: db.m3.xlarge
-        label: "db.m3.xlarge (4 vCPU - 15 GiB)"
-      - name: db.m3.2xlarge
-        label: "db.m3.2xlarge (8 vCPU - 30 GiB)"
-      - name: db.r3.large
-        label: "db.r3.large (2 vCPU - 15 GiB)"
-      - name: db.r3.xlarge
-        label: "db.r3.xlarge (4 vCPU - 30.5 GiB)"
-      - name: db.r3.2xlarge
-        label: "db.r3.2xlarge (8 vCPU - 61 GiB)"
-      - name: db.r3.4xlarge
-        label: "db.r3.4xlarge (16 vCPU - 122 GiB)"
-      - name: db.r3.8xlarge
-        label: "db.r3.8xlarge (32 vCPU - 244 GiB)"
-  - name: plan_medium_allocated_storage
-    type: integer
-    configurable: true
-    optional: false
-    default: 50
-    constraints:
-      min: 5
-      max: 6144
-  - name: plan_medium_storage_type
-    type: string
-    configurable: false
-    optional: false
-    default: gp2
-  - name: plan_medium_cost
-    type: selector
-    configurable: true
-    optional: false
-    default: free
-    option_templates:
-      - name: free
-        select_value: free
-        named_manifests:
-          - name: cost
-            manifest: |
-              []
-      - name: paid
-        select_value: paid
-        named_manifests:
-          - name: cost
-            manifest: |
-              - amount:
-                  (( .properties.plan_medium_cost.paid.currency.value )): <%= "(( .properties.plan_medium_cost.paid.amount.value ))".to_f %>
-                unit: (( .properties.plan_medium_cost.paid.unit.value ))
-        property_blueprints:
-          - name: amount
-            type: string
-            configurable: true
-            optional: false
-          - name: currency
-            type: string
-            configurable: true
-            optional: false
-          - name: unit
-            type: string
-            configurable: true
-            optional: false
-  - name: plan_large_suffix
-    type: string
-    configurable: true
-    optional: false
-    default: large
-  - name: plan_large_db_instance_class
-    type: dropdown_select
-    configurable: true
-    optional: false
-    default: db.m3.xlarge
-    options:
-      - name: db.t2.micro
-        label: "db.t2.micro (1 vCPU - 1 GiB)"
-      - name: db.t2.small
-        label: "db.t2.small (1 vCPU - 2 GiB)"
-      - name: db.t2.medium
-        label: "db.t2.medium (2 vCPU - 4 GiB)"
-      - name: db.t2.large
-        label: "db.t2.large (2 vCPU - 8 GiB)"
-      - name: db.m3.medium
-        label: "db.m3.medium (1 vCPU - 3.75 GiB)"
-      - name: db.m3.large
-        label: "db.m3.large (2 vCPU - 7.5 GiB)"
-      - name: db.m3.xlarge
-        label: "db.m3.xlarge (4 vCPU - 15 GiB)"
-      - name: db.m3.2xlarge
-        label: "db.m3.2xlarge (8 vCPU - 30 GiB)"
-      - name: db.r3.large
-        label: "db.r3.large (2 vCPU - 15 GiB)"
-      - name: db.r3.xlarge
-        label: "db.r3.xlarge (4 vCPU - 30.5 GiB)"
-      - name: db.r3.2xlarge
-        label: "db.r3.2xlarge (8 vCPU - 61 GiB)"
-      - name: db.r3.4xlarge
-        label: "db.r3.4xlarge (16 vCPU - 122 GiB)"
-      - name: db.r3.8xlarge
-        label: "db.r3.8xlarge (32 vCPU - 244 GiB)"
-  - name: plan_large_allocated_storage
-    type: integer
-    configurable: true
-    optional: false
-    default: 100
-    constraints:
-      min: 5
-      max: 6144
-  - name: plan_large_storage_type
-    type: string
-    configurable: false
-    optional: false
-    default: io1
-  - name: plan_large_storage_iops
-    type: integer
-    configurable: false
-    optional: false
-    default: 1000
-  - name: plan_large_cost
-    type: selector
-    configurable: true
-    optional: false
-    default: free
-    option_templates:
-      - name: free
-        select_value: free
-        named_manifests:
-          - name: cost
-            manifest: |
-              []
-      - name: paid
-        select_value: paid
-        named_manifests:
-          - name: cost
-            manifest: |
-              - amount:
-                  (( .properties.plan_large_cost.paid.currency.value )): <%= "(( .properties.plan_large_cost.paid.amount.value ))".to_f %>
-                unit: (( .properties.plan_large_cost.paid.unit.value ))
-        property_blueprints:
-          - name: amount
-            type: string
-            configurable: true
-            optional: false
-          - name: currency
-            type: string
-            configurable: true
-            optional: false
-          - name: unit
-            type: string
-            configurable: true
-            optional: false
   - name: allow_user_provision_parameters
     type: boolean
     configurable: true
@@ -525,6 +150,56 @@ property_blueprints:
     type: boolean
     configurable: true
     default: true
+  - name: plan_small_db_instance_class
+    type: string
+    configurable: false
+    optional: false
+    default: db.r3.large
+  - name: plan_small_allocated_storage
+    type: integer
+    configurable: false
+    optional: false
+    default: 10
+  - name: plan_small_storage_type
+    type: string
+    configurable: false
+    optional: false
+    default: standard
+  - name: plan_medium_db_instance_class
+    type: string
+    configurable: false
+    optional: false
+    default: db.r3.xlarge
+  - name: plan_medium_allocated_storage
+    type: integer
+    configurable: false
+    optional: false
+    default: 100
+  - name: plan_medium_storage_type
+    type: string
+    configurable: false
+    optional: false
+    default: gp2
+  - name: plan_large_db_instance_class
+    type: string
+    configurable: false
+    optional: false
+    default: db.r3.2xlarge
+  - name: plan_large_allocated_storage
+    type: integer
+    configurable: false
+    optional: false
+    default: 500
+  - name: plan_large_storage_type
+    type: string
+    configurable: false
+    optional: false
+    default: io1
+  - name: plan_large_storage_iops
+    type: integer
+    configurable: false
+    optional: false
+    default: 1000
 
 job_types:
   - name: compilation
@@ -632,11 +307,6 @@ job_types:
         label: Broker Auth Credentials
 
     manifest: |
-      db_network_manifest: &db_network_manifest
-        publicly_accessible: (( .properties.publicly_accessible.value ))
-        db_subnet_group_name: (( .properties.db_network.vpc.db_subnet_group_name.value ))
-        vpc_security_group_ids: (( .properties.db_network.selected_option.parsed_manifest(vpc_security_group_ids) ))
-        db_security_groups: (( .properties.db_network.selected_option.parsed_manifest(db_security_groups) ))
       multi_az_manifest: &multi_az_manifest
         multi_az: <%= if "(( .properties.multi_az.value ))" == "enabled" then true else false end %>
         availability_zone: (( .properties.multi_az.disabled.availability_zone.value ))
@@ -648,7 +318,7 @@ job_types:
         aws_access_key_id: "(( .properties.aws_access_key_id.value ))"
         aws_secret_access_key: "(( .properties.aws_secret_access_key.value ))"
         aws_region: "(( .properties.aws_region.value ))"
-        db_prefix: (( .properties.db_prefix.value ))
+        db_prefix: "(( .properties.db_prefix.value ))"
         allow_user_provision_parameters: (( .properties.allow_user_provision_parameters.value ))
         allow_user_update_parameters: (( .properties.allow_user_update_parameters.value ))
         allow_user_bind_parameters: (( .properties.allow_user_bind_parameters.value ))
@@ -665,6 +335,78 @@ job_types:
             interval_in_seconds: 10
         catalog:
           services:
+            - id: 2ae1df05-bd36-49ec-8fda-60bc59bd3faa
+              name: rds-aurora
+              description: AWS RDS Aurora service
+              bindable: true
+              tags:
+                - aurora
+                - mysql
+                - relational
+              metadata:
+                displayName: AWS RDS Aurora
+                imageUrl: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAACK0lEQVRYw+3VXU+ScRzGcd9PdfBjUhpkLWfNuUUamhO8s5YloyeyEt3yoXkijS1yE0OmbcWKDmyVQ4r6BywzsWBzFYQThTYqLCkyEuTm6qQ8Q9w4ae6+XsDn7Nq3CAWuSAAEQAAEYHMC2Ww2WxDwtVHpLwhwEekLAtRUWgOMXrM2dc81cw4kBjhuOPVcp9PpwunRo9zdzBfdrVbudi5gQXSwnXzQ0P4jJOnaVcafEN9sI4tFWUf0eojOqkTtQRJfLi9ezgEYacJDzbymNJWkGr6LshPDzm4yA2dIn6ram1yVk5eO8yM0nQNQEBGVxTV7AJKjh/hL4rqTZM5cIXUGxft4XCQ3dcCSC5inqv5+FbnWgHTl6YydzPfo8CrASRZjInq3HnCOngJeql4DMort1bvpKhERDXpKdkql74PrAPxLBuA3Y9NugE3Bz7Bie5Rw+hhjjIXw/eH9KH6yt4iwpf/9TLGBAgGzyFcYIHdKgIUU8CE5n3F//GUyJZBYCjlgM01vBAheSG6dRWcUaAhoVfpJmc1+wO9Rql9w15+1PMkP8C12mAf/AUPosADjxzxKJNsQtxrzA3FRraJhB/8X+AxuFohUvjIgO1KyTbYBYKw3EgnXj3dGAWlAC5xyAK5DUwYsNkbB8gOp8k8AxlSO86E7WwJawFPrneGcHgO+VcxMyluX8wHhnjQA9K30VdwwRq0A3ijqnZh7DDyQNf3ojQlhEQABEAAB2NzAH/mNMsRSl0sEAAAAAElFTkSuQmCC
+                longDescription: AWS RDS Aurora service
+                providerDisplayName: Amazon Web Services
+                documentationUrl: https://aws.amazon.com/documentation/rds/
+                supportUrl: https://forums.aws.amazon.com/forum.jspa?forumID=60
+              plan_updateable: true
+              plans:
+                - id: caf83c0b-087c-4f4e-9dba-610120eadd4c
+                  name: bronze
+                  description: AWS RDS Aurora - (( .properties.plan_small_db_instance_class.value ))
+                  metadata:
+                    bullets:
+                      - "Dedicated AWS RDS Aurora DB Cluster"
+                      - "DB Instance Class: (( .properties.plan_small_db_instance_class.value ))"
+                  free: true
+                  rds_properties:
+                    db_instance_class: (( .properties.plan_small_db_instance_class.value ))
+                    engine: aurora
+                    auto_minor_version_upgrade: true
+                    copy_tags_to_snapshot: true
+                    publicly_accessible: (( .properties.publicly_accessible.value ))
+                    db_subnet_group_name: (( .properties.db_subnet_group_name.value ))
+                    vpc_security_group_ids:
+                      - (( .properties.vpc_security_group_id.value ))
+                    multi_az: false
+                - id: 80e048ac-cad0-455b-8344-7e96a7cf6ca6
+                  name: silver
+                  description: AWS RDS Aurora - (( .properties.plan_medium_db_instance_class.value ))
+                  metadata:
+                    bullets:
+                      - "Dedicated AWS RDS Aurora DB Cluster"
+                      - "DB Instance Class: (( .properties.plan_medium_db_instance_class.value ))"
+                  free: true
+                  rds_properties:
+                    db_instance_class: (( .properties.plan_medium_db_instance_class.value ))
+                    engine: aurora
+                    storage_type: (( .properties.plan_medium_storage_type.value ))
+                    auto_minor_version_upgrade: true
+                    copy_tags_to_snapshot: true
+                    publicly_accessible: (( .properties.publicly_accessible.value ))
+                    db_subnet_group_name: (( .properties.db_subnet_group_name.value ))
+                    vpc_security_group_ids:
+                      - (( .properties.vpc_security_group_id.value ))
+                    multi_az: false
+                - id: 6f1d974f-62e0-4327-9f43-46a0c2ac3ebb
+                  name: gold
+                  description: AWS RDS Aurora - (( .properties.plan_large_db_instance_class.value ))
+                  metadata:
+                    bullets:
+                      - "Dedicated AWS RDS Aurora DB Cluster"
+                      - "DB Instance Class: (( .properties.plan_large_db_instance_class.value ))"
+                  free: true
+                  rds_properties:
+                    db_instance_class: (( .properties.plan_large_db_instance_class.value ))
+                    engine: aurora
+                    auto_minor_version_upgrade: true
+                    copy_tags_to_snapshot: true
+                    publicly_accessible: (( .properties.publicly_accessible.value ))
+                    db_subnet_group_name: (( .properties.db_subnet_group_name.value ))
+                    vpc_security_group_ids:
+                      - (( .properties.vpc_security_group_id.value ))
+                    multi_az: false
             - id: ce71b484-d542-40f7-9dd4-5526e38c81ba
               name: rds-mysql
               description: AWS RDS MySQL service
@@ -681,72 +423,8 @@ job_types:
                 supportUrl: https://forums.aws.amazon.com/forum.jspa?forumID=60
               plan_updateable: true
               plans:
-                - id: 326b78b0-a8ab-4cc0-8657-79c9c0ac8126
-                  name: 5.5-(( .properties.plan_small_suffix.value ))
-                  description: AWS RDS MySQL 5.5 - (( .properties.plan_small_db_instance_class.value )) - (( .properties.plan_small_allocated_storage.value ))Gb
-                  metadata:
-                    bullets:
-                      - "Dedicated AWS RDS MySQL 5.5 DB Instance"
-                      - "DB Instance Class: (( .properties.plan_small_db_instance_class.value ))"
-                      - "Allocated Storage: (( .properties.plan_small_allocated_storage.value ))Gb"
-                      - "Magnetic storage"
-                    costs: (( .properties.plan_small_cost.selected_option.parsed_manifest(cost) ))
-                  free: <%= if "(( .properties.plan_small_cost.value ))" == "free" then true else false end %>
-                  rds_properties:
-                    db_instance_class: (( .properties.plan_small_db_instance_class.value ))
-                    engine: MySQL
-                    engine_version: 5.5.42
-                    allocated_storage: (( .properties.plan_small_allocated_storage.value ))
-                    storage_type: (( .properties.plan_small_storage_type.value ))
-                    auto_minor_version_upgrade: true
-                    copy_tags_to_snapshot: true
-                    <<: *db_network_manifest
-                    <<: *multi_az_manifest
-                - id: 729d81e7-29a0-4709-bdf2-3317a1468291
-                  name: 5.5-(( .properties.plan_medium_suffix.value ))
-                  description: AWS RDS MySQL 5.5 - (( .properties.plan_medium_db_instance_class.value )) - (( .properties.plan_medium_allocated_storage.value ))Gb SSD
-                  metadata:
-                    bullets:
-                      - "Dedicated AWS RDS MySQL 5.5 DB Instance"
-                      - "DB Instance Class: (( .properties.plan_medium_db_instance_class.value ))"
-                      - "Allocated Storage: (( .properties.plan_medium_allocated_storage.value ))Gb"
-                      - "General purpose SSD-backed storage"
-                    costs: (( .properties.plan_medium_cost.selected_option.parsed_manifest(cost) ))
-                  free: <%= if "(( .properties.plan_medium_cost.value ))" == "free" then true else false end %>
-                  rds_properties:
-                    db_instance_class: (( .properties.plan_medium_db_instance_class.value ))
-                    engine: MySQL
-                    engine_version: 5.5.42
-                    allocated_storage: (( .properties.plan_medium_allocated_storage.value ))
-                    storage_type: (( .properties.plan_medium_storage_type.value ))
-                    auto_minor_version_upgrade: true
-                    copy_tags_to_snapshot: true
-                    <<: *db_network_manifest
-                    <<: *multi_az_manifest
-                - id: 499e9ff5-28a7-43eb-bf93-7bc69b61712b
-                  name: 5.5-(( .properties.plan_large_suffix.value ))
-                  description: AWS RDS MySQL 5.5 - (( .properties.plan_large_db_instance_class.value )) - (( .properties.plan_large_allocated_storage.value ))Gb SSD
-                  metadata:
-                    bullets:
-                      - "Dedicated AWS RDS MySQL 5.5 DB Instance"
-                      - "DB Instance Class: (( .properties.plan_large_db_instance_class.value ))"
-                      - "Allocated Storage: (( .properties.plan_large_allocated_storage.value ))Gb"
-                      - "Provisioned IOPS storage (1000 IOPS)"
-                    costs: (( .properties.plan_large_cost.selected_option.parsed_manifest(cost) ))
-                  free: <%= if "(( .properties.plan_large_cost.value ))" == "free" then true else false end %>
-                  rds_properties:
-                    db_instance_class: (( .properties.plan_large_db_instance_class.value ))
-                    engine: MySQL
-                    engine_version: 5.5.42
-                    allocated_storage: (( .properties.plan_large_allocated_storage.value ))
-                    storage_type: (( .properties.plan_large_storage_type.value ))
-                    iops: (( .properties.plan_large_storage_iops.value ))
-                    auto_minor_version_upgrade: true
-                    copy_tags_to_snapshot: true
-                    <<: *db_network_manifest
-                    <<: *multi_az_manifest
                 - id: 5b8282cf-a669-4ffc-b426-c169a7bbfc71
-                  name: 5.6-(( .properties.plan_small_suffix.value ))
+                  name: 5.6-bronze
                   description: AWS RDS MySQL 5.6 - (( .properties.plan_small_db_instance_class.value )) - (( .properties.plan_small_allocated_storage.value ))Gb
                   metadata:
                     bullets:
@@ -754,8 +432,7 @@ job_types:
                       - "DB Instance Class: (( .properties.plan_small_db_instance_class.value ))"
                       - "Allocated Storage: (( .properties.plan_small_allocated_storage.value ))Gb"
                       - "Magnetic storage"
-                    costs: (( .properties.plan_small_cost.selected_option.parsed_manifest(cost) ))
-                  free: <%= if "(( .properties.plan_small_cost.value ))" == "free" then true else false end %>
+                  free: true
                   rds_properties:
                     db_instance_class: (( .properties.plan_small_db_instance_class.value ))
                     engine: MySQL
@@ -764,10 +441,13 @@ job_types:
                     storage_type: (( .properties.plan_small_storage_type.value ))
                     auto_minor_version_upgrade: true
                     copy_tags_to_snapshot: true
-                    <<: *db_network_manifest
+                    publicly_accessible: (( .properties.publicly_accessible.value ))
+                    db_subnet_group_name: (( .properties.db_subnet_group_name.value ))
+                    vpc_security_group_ids:
+                      - (( .properties.vpc_security_group_id.value ))
                     <<: *multi_az_manifest
                 - id: b4943c34-fd33-47a6-8f0b-eb4f462fd746
-                  name: 5.6-(( .properties.plan_medium_suffix.value ))
+                  name: 5.6-silver
                   description: AWS RDS MySQL 5.6 - (( .properties.plan_medium_db_instance_class.value )) - (( .properties.plan_medium_allocated_storage.value ))Gb SSD
                   metadata:
                     bullets:
@@ -775,8 +455,7 @@ job_types:
                       - "DB Instance Class: (( .properties.plan_medium_db_instance_class.value ))"
                       - "Allocated Storage: (( .properties.plan_medium_allocated_storage.value ))Gb"
                       - "General purpose SSD-backed storage"
-                    costs: (( .properties.plan_medium_cost.selected_option.parsed_manifest(cost) ))
-                  free: <%= if "(( .properties.plan_medium_cost.value ))" == "free" then true else false end %>
+                  free: true
                   rds_properties:
                     db_instance_class: (( .properties.plan_medium_db_instance_class.value ))
                     engine: MySQL
@@ -785,10 +464,13 @@ job_types:
                     storage_type: (( .properties.plan_medium_storage_type.value ))
                     auto_minor_version_upgrade: true
                     copy_tags_to_snapshot: true
-                    <<: *db_network_manifest
+                    publicly_accessible: (( .properties.publicly_accessible.value ))
+                    db_subnet_group_name: (( .properties.db_subnet_group_name.value ))
+                    vpc_security_group_ids:
+                      - (( .properties.vpc_security_group_id.value ))
                     <<: *multi_az_manifest
                 - id: 7e47cd05-625e-415d-bafd-09fbb0eb9ed8
-                  name: 5.6-(( .properties.plan_large_suffix.value ))
+                  name: 5.6-gold
                   description: AWS RDS MySQL 5.6 - (( .properties.plan_large_db_instance_class.value )) - (( .properties.plan_large_allocated_storage.value ))Gb SSD
                   metadata:
                     bullets:
@@ -796,8 +478,7 @@ job_types:
                       - "DB Instance Class: (( .properties.plan_large_db_instance_class.value ))"
                       - "Allocated Storage: (( .properties.plan_large_allocated_storage.value ))Gb"
                       - "Provisioned IOPS storage (1000 IOPS)"
-                    costs: (( .properties.plan_large_cost.selected_option.parsed_manifest(cost) ))
-                  free: <%= if "(( .properties.plan_large_cost.value ))" == "free" then true else false end %>
+                  free: true
                   rds_properties:
                     db_instance_class: (( .properties.plan_large_db_instance_class.value ))
                     engine: MySQL
@@ -807,7 +488,97 @@ job_types:
                     iops: (( .properties.plan_large_storage_iops.value ))
                     auto_minor_version_upgrade: true
                     copy_tags_to_snapshot: true
-                    <<: *db_network_manifest
+                    publicly_accessible: (( .properties.publicly_accessible.value ))
+                    db_subnet_group_name: (( .properties.db_subnet_group_name.value ))
+                    vpc_security_group_ids:
+                      - (( .properties.vpc_security_group_id.value ))
+                    <<: *multi_az_manifest
+            - id: 0c1647b1-6c12-4311-ad27-897db74dc285
+              name: rds-mariadb
+              description: AWS RDS MariaDB service
+              bindable: true
+              tags:
+                  - mariadb
+                  - mysql
+                  - relational
+              metadata:
+                displayName: AWS RDS MariaDB
+                imageUrl: data:image/png;base64,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
+                longDescription: AWS RDS MariaDB service
+                providerDisplayName: Amazon Web Services
+                documentationUrl: https://aws.amazon.com/documentation/rds/
+                supportUrl: https://forums.aws.amazon.com/forum.jspa?forumID=60
+              plan_updateable: true
+              plans:
+                - id: a8a33f61-8492-4024-8cae-e210ce9cf34b
+                  name: 10.0-bronze
+                  description: AWS RDS MariaDB 10.0 - (( .properties.plan_small_db_instance_class.value )) - (( .properties.plan_small_allocated_storage.value ))Gb
+                  metadata:
+                    bullets:
+                      - "Dedicated AWS RDS MariaDB 10.0 DB Instance"
+                      - "DB Instance Class: (( .properties.plan_small_db_instance_class.value ))"
+                      - "Allocated Storage: (( .properties.plan_small_allocated_storage.value ))Gb"
+                      - "Magnetic storage"
+                  free: true
+                  rds_properties:
+                    db_instance_class: (( .properties.plan_small_db_instance_class.value ))
+                    engine: MariaDB
+                    engine_version: 10.0.17
+                    allocated_storage: (( .properties.plan_small_allocated_storage.value ))
+                    storage_type: (( .properties.plan_small_storage_type.value ))
+                    auto_minor_version_upgrade: true
+                    copy_tags_to_snapshot: true
+                    publicly_accessible: (( .properties.publicly_accessible.value ))
+                    db_subnet_group_name: (( .properties.db_subnet_group_name.value ))
+                    vpc_security_group_ids:
+                      - (( .properties.vpc_security_group_id.value ))
+                    <<: *multi_az_manifest
+                - id: 27766c1c-ad0c-4467-a04f-37aed25ee6db
+                  name: 10.0-silver
+                  description: AWS RDS MariaDB 10.0 - (( .properties.plan_medium_db_instance_class.value )) - (( .properties.plan_medium_allocated_storage.value ))Gb SSD
+                  metadata:
+                    bullets:
+                      - "Dedicated AWS RDS MariaDB 10.0 DB Instance"
+                      - "DB Instance Class: (( .properties.plan_medium_db_instance_class.value ))"
+                      - "Allocated Storage: (( .properties.plan_medium_allocated_storage.value ))Gb"
+                      - "General purpose SSD-backed storage"
+                  free: true
+                  rds_properties:
+                    db_instance_class: (( .properties.plan_medium_db_instance_class.value ))
+                    engine: MariaDB
+                    engine_version: 10.0.17
+                    allocated_storage: (( .properties.plan_medium_allocated_storage.value ))
+                    storage_type: (( .properties.plan_medium_storage_type.value ))
+                    auto_minor_version_upgrade: true
+                    copy_tags_to_snapshot: true
+                    publicly_accessible: (( .properties.publicly_accessible.value ))
+                    db_subnet_group_name: (( .properties.db_subnet_group_name.value ))
+                    vpc_security_group_ids:
+                      - (( .properties.vpc_security_group_id.value ))
+                    <<: *multi_az_manifest
+                - id: 0a93e267-7a20-43a9-ad8c-0429df1db58a
+                  name: 10.0-gold
+                  description: AWS RDS MariaDB 10.0 - (( .properties.plan_large_db_instance_class.value )) - (( .properties.plan_large_allocated_storage.value ))Gb SSD
+                  metadata:
+                    bullets:
+                      - "Dedicated AWS RDS MariaDB 10.0 DB Instance"
+                      - "DB Instance Class: (( .properties.plan_large_db_instance_class.value ))"
+                      - "Allocated Storage: (( .properties.plan_large_allocated_storage.value ))Gb"
+                      - "Provisioned IOPS storage (1000 IOPS)"
+                  free: true
+                  rds_properties:
+                    db_instance_class: (( .properties.plan_large_db_instance_class.value ))
+                    engine: MariaDB
+                    engine_version: 10.0.17
+                    allocated_storage: (( .properties.plan_large_allocated_storage.value ))
+                    storage_type: (( .properties.plan_large_storage_type.value ))
+                    iops: (( .properties.plan_large_storage_iops.value ))
+                    auto_minor_version_upgrade: true
+                    copy_tags_to_snapshot: true
+                    publicly_accessible: (( .properties.publicly_accessible.value ))
+                    db_subnet_group_name: (( .properties.db_subnet_group_name.value ))
+                    vpc_security_group_ids:
+                      - (( .properties.vpc_security_group_id.value ))
                     <<: *multi_az_manifest
             - id: a2c9adda-6511-462c-9934-b3fd8236e9f0
               name: rds-postgres
@@ -815,6 +586,7 @@ job_types:
               bindable: true
               tags:
                 - postgres
+                - postgresql
                 - relational
               metadata:
                 displayName: AWS RDS PostgreSQL
@@ -825,72 +597,8 @@ job_types:
                 supportUrl: https://forums.aws.amazon.com/forum.jspa?forumID=60
               plan_updateable: true
               plans:
-                - id: d42fc3cc-1341-4aa3-866e-01bc5243dc3e
-                  name: 9.3-(( .properties.plan_small_suffix.value ))
-                  description: AWS RDS PostgreSQL 9.3 - (( .properties.plan_small_db_instance_class.value )) - (( .properties.plan_small_allocated_storage.value ))Gb
-                  metadata:
-                    bullets:
-                      - "Dedicated AWS RDS PostgreSQL 9.3 DB Instance"
-                      - "DB Instance Class: (( .properties.plan_small_db_instance_class.value ))"
-                      - "Allocated Storage: (( .properties.plan_small_allocated_storage.value ))Gb"
-                      - "Magnetic storage"
-                    costs: (( .properties.plan_small_cost.selected_option.parsed_manifest(cost) ))
-                  free: <%= if "(( .properties.plan_small_cost.value ))" == "free" then true else false end %>
-                  rds_properties:
-                    db_instance_class: (( .properties.plan_small_db_instance_class.value ))
-                    engine: postgres
-                    engine_version: 9.3.9
-                    allocated_storage: (( .properties.plan_small_allocated_storage.value ))
-                    storage_type: (( .properties.plan_small_storage_type.value ))
-                    auto_minor_version_upgrade: true
-                    copy_tags_to_snapshot: true
-                    <<: *db_network_manifest
-                    <<: *multi_az_manifest
-                - id: 80768f31-5c2c-40e8-8135-59fe3d710dc3
-                  name: 9.3-(( .properties.plan_medium_suffix.value ))
-                  description: AWS RDS PostgreSQL 9.3 - (( .properties.plan_medium_db_instance_class.value )) - (( .properties.plan_medium_allocated_storage.value ))Gb SSD
-                  metadata:
-                    bullets:
-                      - "Dedicated AWS RDS PostgreSQL 9.3 DB Instance"
-                      - "DB Instance Class: (( .properties.plan_medium_db_instance_class.value ))"
-                      - "Allocated Storage: (( .properties.plan_medium_allocated_storage.value ))Gb"
-                      - "General purpose SSD-backed storage"
-                    costs: (( .properties.plan_medium_cost.selected_option.parsed_manifest(cost) ))
-                  free: <%= if "(( .properties.plan_medium_cost.value ))" == "free" then true else false end %>
-                  rds_properties:
-                    db_instance_class: (( .properties.plan_medium_db_instance_class.value ))
-                    engine: postgres
-                    engine_version: 9.3.9
-                    allocated_storage: (( .properties.plan_medium_allocated_storage.value ))
-                    storage_type: (( .properties.plan_medium_storage_type.value ))
-                    auto_minor_version_upgrade: true
-                    copy_tags_to_snapshot: true
-                    <<: *db_network_manifest
-                    <<: *multi_az_manifest
-                - id: 347dfd90-4f0c-42ed-a92c-1d8096d373d1
-                  name: 9.3-(( .properties.plan_large_suffix.value ))
-                  description: AWS RDS PostgreSQL 9.3 - (( .properties.plan_large_db_instance_class.value )) - (( .properties.plan_large_allocated_storage.value ))Gb SSD
-                  metadata:
-                    bullets:
-                      - "Dedicated AWS RDS PostgreSQL 9.3 DB Instance"
-                      - "DB Instance Class: (( .properties.plan_large_db_instance_class.value ))"
-                      - "Allocated Storage: (( .properties.plan_large_allocated_storage.value ))Gb"
-                      - "Provisioned IOPS storage (1000 IOPS)"
-                    costs: (( .properties.plan_large_cost.selected_option.parsed_manifest(cost) ))
-                  free: <%= if "(( .properties.plan_large_cost.value ))" == "free" then true else false end %>
-                  rds_properties:
-                    db_instance_class: (( .properties.plan_large_db_instance_class.value ))
-                    engine: postgres
-                    engine_version: 9.3.9
-                    allocated_storage: (( .properties.plan_large_allocated_storage.value ))
-                    storage_type: (( .properties.plan_large_storage_type.value ))
-                    iops: (( .properties.plan_large_storage_iops.value ))
-                    auto_minor_version_upgrade: true
-                    copy_tags_to_snapshot: true
-                    <<: *db_network_manifest
-                    <<: *multi_az_manifest
                 - id: d03b544e-3be5-4aca-bb3b-11544247f313
-                  name: 9.4-(( .properties.plan_small_suffix.value ))
+                  name: 9.4-bronze
                   description: AWS RDS PostgreSQL 9.4 - (( .properties.plan_small_db_instance_class.value )) - (( .properties.plan_small_allocated_storage.value ))Gb
                   metadata:
                     bullets:
@@ -898,8 +606,7 @@ job_types:
                       - "DB Instance Class: (( .properties.plan_small_db_instance_class.value ))"
                       - "Allocated Storage: (( .properties.plan_small_allocated_storage.value ))Gb"
                       - "Magnetic storage"
-                    costs: (( .properties.plan_small_cost.selected_option.parsed_manifest(cost) ))
-                  free: <%= if "(( .properties.plan_small_cost.value ))" == "free" then true else false end %>
+                  free: true
                   rds_properties:
                     db_instance_class: (( .properties.plan_small_db_instance_class.value ))
                     engine: postgres
@@ -908,10 +615,13 @@ job_types:
                     storage_type: (( .properties.plan_small_storage_type.value ))
                     auto_minor_version_upgrade: true
                     copy_tags_to_snapshot: true
-                    <<: *db_network_manifest
+                    publicly_accessible: (( .properties.publicly_accessible.value ))
+                    db_subnet_group_name: (( .properties.db_subnet_group_name.value ))
+                    vpc_security_group_ids:
+                      - (( .properties.vpc_security_group_id.value ))
                     <<: *multi_az_manifest
                 - id: 65cfcd68-625d-4635-a828-4ccef50af986
-                  name: 9.4-(( .properties.plan_medium_suffix.value ))
+                  name: 9.4-silver
                   description: AWS RDS PostgreSQL 9.4 - (( .properties.plan_medium_db_instance_class.value )) - (( .properties.plan_medium_allocated_storage.value ))Gb SSD
                   metadata:
                     bullets:
@@ -919,8 +629,7 @@ job_types:
                       - "DB Instance Class: (( .properties.plan_medium_db_instance_class.value ))"
                       - "Allocated Storage: (( .properties.plan_medium_allocated_storage.value ))Gb"
                       - "General purpose SSD-backed storage"
-                    costs: (( .properties.plan_medium_cost.selected_option.parsed_manifest(cost) ))
-                  free: <%= if "(( .properties.plan_medium_cost.value ))" == "free" then true else false end %>
+                  free: true
                   rds_properties:
                     db_instance_class: (( .properties.plan_medium_db_instance_class.value ))
                     engine: postgres
@@ -929,10 +638,13 @@ job_types:
                     storage_type: (( .properties.plan_medium_storage_type.value ))
                     auto_minor_version_upgrade: true
                     copy_tags_to_snapshot: true
-                    <<: *db_network_manifest
+                    publicly_accessible: (( .properties.publicly_accessible.value ))
+                    db_subnet_group_name: (( .properties.db_subnet_group_name.value ))
+                    vpc_security_group_ids:
+                      - (( .properties.vpc_security_group_id.value ))
                     <<: *multi_az_manifest
                 - id: 8f8d8ed7-ddd3-4b1f-befa-976cf7fc4116
-                  name: 9.4-(( .properties.plan_large_suffix.value ))
+                  name: 9.4-gold
                   description: AWS RDS PostgreSQL 9.4 - (( .properties.plan_large_db_instance_class.value )) - (( .properties.plan_large_allocated_storage.value ))Gb SSD
                   metadata:
                     bullets:
@@ -940,8 +652,7 @@ job_types:
                       - "DB Instance Class: (( .properties.plan_large_db_instance_class.value ))"
                       - "Allocated Storage: (( .properties.plan_large_allocated_storage.value ))Gb"
                       - "Provisioned IOPS storage (1000 IOPS)"
-                    costs: (( .properties.plan_large_cost.selected_option.parsed_manifest(cost) ))
-                  free: <%= if "(( .properties.plan_large_cost.value ))" == "free" then true else false end %>
+                  free: true
                   rds_properties:
                     db_instance_class: (( .properties.plan_large_db_instance_class.value ))
                     engine: postgres
@@ -951,7 +662,10 @@ job_types:
                     iops: (( .properties.plan_large_storage_iops.value ))
                     auto_minor_version_upgrade: true
                     copy_tags_to_snapshot: true
-                    <<: *db_network_manifest
+                    publicly_accessible: (( .properties.publicly_accessible.value ))
+                    db_subnet_group_name: (( .properties.db_subnet_group_name.value ))
+                    vpc_security_group_ids:
+                      - (( .properties.vpc_security_group_id.value ))
                     <<: *multi_az_manifest
 
   - name: broker-registrar
