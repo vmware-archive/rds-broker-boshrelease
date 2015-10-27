@@ -6,7 +6,7 @@ stemcell_criteria:
 
 releases:
   - name: rds-broker
-    file: rds-broker-1.tgz
-    version: "1"
-    md5: 81ea81fc3dcf862471860bdbd5dbecdf
-    url: https://storage.googleapis.com/pivotal/rds-broker-1.tgz
+    file: rds-broker-2.tgz
+    version: "2"
+    md5: faaaaf08d23d6fde1bc571dc6a4244e6
+    url: https://storage.googleapis.com/pivotal/rds-broker-2.tgz

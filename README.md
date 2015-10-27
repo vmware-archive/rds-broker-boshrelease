@@ -18,7 +18,7 @@ To use this BOSH release, first upload it to your BOSH:
 bosh target BOSH_HOST
 git clone https://github.com/cf-platform-eng/rds-broker-boshrelease.git
 cd rds-broker-boshrelease
-bosh upload release releases/rds-broker/rds-broker-1.yml
+bosh upload release releases/rds-broker/rds-broker-2.yml
 ```
 
 #### Create a BOSH deployment manifest
