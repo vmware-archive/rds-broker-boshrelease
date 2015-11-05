@@ -2,6 +2,8 @@
 
 This is a [BOSH](http://bosh.io/) release for the [AWS RDS Service Broker](https://github.com/cf-platform-eng/rds-broker).
 
+** This BOSH Release has been deprecated in favor of the [AWS Service Broker BOSH Release](https://github.com/cf-platform-eng/aws-broker-boshrelease)**
+
 ## Disclaimer
 
 This is NOT presently a production ready [AWS RDS Service Broker](https://github.com/cf-platform-eng/rds-broker) BOSH release. This is a work in progress. It is suitable for experimentation and may not become supported in the future.
